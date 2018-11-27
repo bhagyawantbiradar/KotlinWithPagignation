@@ -1,18 +1,12 @@
 package com.example.bhagyantbiradar.kotlincodechallenge.activities.main
 
-import com.example.bhagyantbiradar.kotlincodechallenge.APIInterface
+import com.example.bhagyantbiradar.kotlincodechallenge.interfaces.APIInterface
 import com.example.bhagyantbiradar.kotlincodechallenge.pojos.SearchResult
 import com.example.bhagyantbiradar.kotlincodechallenge.utils.ApiClient
 import retrofit2.Call
 import retrofit2.Response
 
-class MainPresenter : MainContract.Presenter {
-
-    lateinit var view: MainContract.View
-
-    constructor(view: MainContract.View) {
-        this.view = view
-    }
+class MainPresenter(var view: MainContract.View) : MainContract.Presenter {
 
 
     override fun onSearchClicked(apiKey: String, query: String, page: Int, isScrollEnd: Boolean) {
@@ -21,11 +15,11 @@ class MainPresenter : MainContract.Presenter {
         } else {
             val sApiService = ApiClient.client!!.create(APIInterface::class.java)
 
-            val deliveryService = sApiService.search(apiKey, "$query", "$page")
+            val searchMovieService = sApiService.search(apiKey, "$query", "$page")
 
-            deliveryService.enqueue(object : retrofit2.Callback<SearchResult> {
+            searchMovieService.enqueue(object : retrofit2.Callback<SearchResult> {
                 override fun onFailure(call: Call<SearchResult>, t: Throwable) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
                 }
 
                 override fun onResponse(call: Call<SearchResult>, response: Response<SearchResult>) {
@@ -38,7 +32,6 @@ class MainPresenter : MainContract.Presenter {
                         } else {
                             view.showNoMoreResultsFound()
                         }
-
                     }
                 }
 

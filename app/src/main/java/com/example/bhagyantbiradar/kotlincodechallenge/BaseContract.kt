@@ -1,6 +1,6 @@
 package com.example.bhagyantbiradar.kotlincodechallenge
 
-class BaseContract {
+interface BaseContract {
 
     interface Presenter<in T> {
         fun subscribe()

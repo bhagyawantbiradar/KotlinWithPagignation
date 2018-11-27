@@ -9,31 +9,21 @@ import android.widget.Toast
 import com.example.bhagyantbiradar.kotlincodechallenge.R
 import com.example.bhagyantbiradar.kotlincodechallenge.adapters.MoviesListAdapter
 import com.example.bhagyantbiradar.kotlincodechallenge.pojos.Search
+import com.example.bhagyantbiradar.kotlincodechallenge.utils.MoviesRepository
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), MainContract.View, View.OnClickListener {
-    override fun showNoMoreResultsFound() {
-        Toast.makeText(this, "No more results found.", Toast.LENGTH_LONG).show()
+class MainActivity : AppCompatActivity(), MainContract.View, View.OnClickListener, View.OnLongClickListener {
+    override fun onLongClick(v: View?): Boolean {
+        showListFromLocalDb(moviesRepository.getAllMovies() as ArrayList<Search>)
+        return true
     }
 
-    override fun showTooSmallNameError() {
-        Toast.makeText(this, "Movie name should contain minimum 4 characters", Toast.LENGTH_LONG).show()
-    }
-
-    lateinit var moviesListAdapter: MoviesListAdapter
+    private lateinit var moviesListAdapter: MoviesListAdapter
     lateinit var presenter: MainContract.Presenter
-    var count: Int = 1
+    var pageCount: Int = 1
     val API_KEY = "28991504"
-
-    override fun growList(newSearches: ArrayList<Search>) {
-        moviesListAdapter.growList(newSearches)
-    }
-
-    override fun initViews() {
-        rvList.layoutManager = LinearLayoutManager(this)
-        btnSearch.setOnClickListener(this)
-    }
+    lateinit var moviesRepository: MoviesRepository
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,13 +35,14 @@ class MainActivity : AppCompatActivity(), MainContract.View, View.OnClickListene
     }
 
     fun onSearchClicked() {
-        presenter.onSearchClicked(API_KEY, etQuery.text.toString(), count, false)
+        pageCount = 1
+        presenter.onSearchClicked(API_KEY, etQuery.text.toString(), pageCount, false)
         rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (!recyclerView.canScrollVertically(1)) {
-                    presenter.onSearchClicked(API_KEY, etQuery.text.toString(), count++, true)
+                    presenter.onSearchClicked(API_KEY, etQuery.text.toString(), pageCount++, true)
                 }
             }
         })
@@ -62,9 +53,35 @@ class MainActivity : AppCompatActivity(), MainContract.View, View.OnClickListene
         moviesListAdapter = MoviesListAdapter(this, list, presenter as MainPresenter)
         rvList.adapter = moviesListAdapter
 
+        /*  for (search in list) {
+              moviesRepository.insertMovie(search)
+          }*/
+    }
+
+    fun showListFromLocalDb(list: ArrayList<Search>?) {
+        moviesListAdapter = MoviesListAdapter(this, list!!, presenter as MainPresenter)
+        rvList.adapter = moviesListAdapter
     }
 
     override fun onClick(v: View?) {
         onSearchClicked()
+    }
+
+    override fun showNoMoreResultsFound() {
+        Toast.makeText(this, "No more results found.", Toast.LENGTH_LONG).show()
+    }
+
+    override fun showTooSmallNameError() {
+        Toast.makeText(this, "Movie name should contain minimum 4 characters", Toast.LENGTH_LONG).show()
+    }
+
+    override fun growList(newSearches: ArrayList<Search>) {
+        moviesListAdapter.growList(newSearches)
+    }
+
+    override fun initViews() {
+        rvList.layoutManager = LinearLayoutManager(this)
+        btnSearch.setOnClickListener(this)
+        //moviesRepository = MoviesRepository(application)
     }
 }

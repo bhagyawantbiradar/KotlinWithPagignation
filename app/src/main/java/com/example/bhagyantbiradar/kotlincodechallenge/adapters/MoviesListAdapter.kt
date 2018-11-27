@@ -2,13 +2,14 @@ package com.example.bhagyantbiradar.kotlincodechallenge.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.bhagyantbiradar.kotlincodechallenge.R
-import com.example.bhagyantbiradar.kotlincodechallenge.activities.MovieDetails.MovieDetailsActivity
+import com.example.bhagyantbiradar.kotlincodechallenge.activities.movie_details.MovieDetailsActivity
 import com.example.bhagyantbiradar.kotlincodechallenge.activities.main.MainActivity
 import com.example.bhagyantbiradar.kotlincodechallenge.activities.main.MainPresenter
 import com.example.bhagyantbiradar.kotlincodechallenge.pojos.Search
@@ -39,21 +40,22 @@ class MoviesListAdapter(private val context: Context, private val searchList: Ar
             .placeholder(R.mipmap.ic_launcher)
             .into(holder.itemView.ivPoster)
 
-        holder.itemView.setOnClickListener (object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                val intent = Intent(context,MovieDetailsActivity::class.java)
-                val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(context as MainActivity,holder.itemView.ivPoster,"poster")
-                intent.putExtra("movie",searchItem)
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context,MovieDetailsActivity::class.java)
+            val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(context as MainActivity,holder.itemView.ivPoster,"poster")
+            intent.putExtra("movie",searchItem)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 context.startActivity(intent,optionsCompat.toBundle())
+            }else{
+                context.startActivity(intent)
             }
-
-        })
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     fun growList(newSearchList : List<Search>){
         searchList.addAll(newSearchList)
-        notifyDataSetChanged()
+        notifyItemInserted(searchList.size-1)
     }
 
 }

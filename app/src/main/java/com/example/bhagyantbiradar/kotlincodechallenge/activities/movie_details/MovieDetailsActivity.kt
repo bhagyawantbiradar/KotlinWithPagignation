@@ -1,4 +1,4 @@
-package com.example.bhagyantbiradar.kotlincodechallenge.activities.MovieDetails
+package com.example.bhagyantbiradar.kotlincodechallenge.activities.movie_details
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

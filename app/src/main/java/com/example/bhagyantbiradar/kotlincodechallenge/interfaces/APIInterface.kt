@@ -1,4 +1,4 @@
-package com.example.bhagyantbiradar.kotlincodechallenge
+package com.example.bhagyantbiradar.kotlincodechallenge.interfaces
 
 import com.example.bhagyantbiradar.kotlincodechallenge.pojos.SearchResult
 import retrofit2.Call

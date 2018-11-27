@@ -1,5 +1,7 @@
 package com.example.bhagyantbiradar.kotlincodechallenge.pojos
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
@@ -17,8 +19,12 @@ data class SearchResult(
     val response: String
 )
 
-
+@Entity(tableName = "Movie")
 data class Search(
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    @Expose
+    val id: Int,
     @SerializedName("Title")
     @Expose
     val title: String,
@@ -36,6 +42,7 @@ data class Search(
     val poster: String
 ):Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -49,6 +56,7 @@ data class Search(
         parcel.writeString(imdbID)
         parcel.writeString(type)
         parcel.writeString(poster)
+        parcel.writeInt(id)
     }
 
     override fun describeContents(): Int {
